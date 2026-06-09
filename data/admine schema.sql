@@ -1,0 +1,15 @@
+CREATE TABLE ADMINS (
+  admin_id   INT          AUTO_INCREMENT PRIMARY KEY,
+  admin_name VARCHAR(100) NOT NULL,
+  email      VARCHAR(100) NOT NULL UNIQUE,
+  password   VARCHAR(255) NOT NULL,
+  phone      VARCHAR(15)  DEFAULT NULL,
+  image      VARCHAR(255) DEFAULT NULL
+);
+
+CREATE TABLE otp (
+  id         INT          AUTO_INCREMENT PRIMARY KEY,
+  mobile     VARCHAR(15)  NOT NULL,
+  vid        VARCHAR(100) NOT NULL,
+  created_at DATETIME     DEFAULT CURRENT_TIMESTAMP
+);
