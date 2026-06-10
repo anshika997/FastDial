@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import fastdialLogo from '../../assets/Logo2.svg';
 import mobileImage1 from '../../assets/Mobile.png'; // First mobile image (blue section)
 import mobileImage2 from '../../assets/Mobile2.svg'; // Second mobile image (white section)
@@ -19,7 +19,9 @@ const CommonLanding = () => {
       >
         {/* Header */}
         <div className="w-4/5 mx-auto mt-10 h-[70px] flex items-center justify-between p-2 bg-white rounded-lg">
-          <img src={fastdialLogo} alt="Fastdial Logo" className="h-12" />
+          <a href="http://localhost:5173/">
+            <img src={fastdialLogo} alt="Fastdial Logo" className="h-12 cursor-pointer" />
+          </a>
           <div className="relative">
             <button
               onClick={() => setIsLoginDropdownOpen(!isLoginDropdownOpen)}

@@ -10,14 +10,125 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// ============================================================
+// SMTP Rate Limiter — Prevents Gmail from blocking us
+// ============================================================
+// Gmail limits: ~500 emails/day, ~20 emails/second
+// We enforce stricter limits to stay safe:
+//   - Max 3 emails per email address per 10 minutes (anti-abuse)
+//   - Max 100 emails globally per hour (stay under Gmail limits)
+//   - Max 5 emails per email address per day
+
+const emailRateMap = new Map(); // key: email → { timestamps: [] }
+const globalEmailLog = [];       // all email timestamps
+
+const RATE_LIMITS = {
+  PER_EMAIL_WINDOW_MS: 10 * 60 * 1000,  // 10 minutes
+  PER_EMAIL_MAX: 3,                       // Max 3 OTPs per email in 10 min
+  PER_EMAIL_DAILY_MAX: 5,                 // Max 5 OTPs per email per day
+  GLOBAL_WINDOW_MS: 60 * 60 * 1000,      // 1 hour
+  GLOBAL_MAX: 100,                        // Max 100 emails per hour globally
+};
+
 /**
- * Send OTP email via Gmail SMTP (Nodemailer)
+ * Check if sending an email to this address is allowed by rate limits
+ * @param {string} toEmail
+ * @returns {{ allowed: boolean, retryAfterMs?: number, reason?: string }}
+ */
+const checkRateLimit = (toEmail) => {
+  const now = Date.now();
+  const emailKey = toEmail.toLowerCase().trim();
+
+  // --- Per-email rate limit (10-minute window) ---
+  if (!emailRateMap.has(emailKey)) {
+    emailRateMap.set(emailKey, { timestamps: [] });
+  }
+  const emailData = emailRateMap.get(emailKey);
+
+  // Clean old entries outside the 10-minute window
+  emailData.timestamps = emailData.timestamps.filter(
+    (ts) => now - ts < RATE_LIMITS.PER_EMAIL_WINDOW_MS
+  );
+
+  if (emailData.timestamps.length >= RATE_LIMITS.PER_EMAIL_MAX) {
+    const oldestInWindow = emailData.timestamps[0];
+    const retryAfterMs = RATE_LIMITS.PER_EMAIL_WINDOW_MS - (now - oldestInWindow);
+    return {
+      allowed: false,
+      retryAfterMs,
+      reason: `Too many OTP requests for ${emailKey}. Please wait ${Math.ceil(retryAfterMs / 60000)} minute(s) before trying again.`,
+    };
+  }
+
+  // --- Per-email daily limit ---
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+  const dailyCount = emailData.timestamps.filter(
+    (ts) => ts >= todayStart.getTime()
+  ).length;
+
+  if (dailyCount >= RATE_LIMITS.PER_EMAIL_DAILY_MAX) {
+    return {
+      allowed: false,
+      retryAfterMs: null,
+      reason: `Daily OTP limit reached for ${emailKey}. Maximum ${RATE_LIMITS.PER_EMAIL_DAILY_MAX} OTPs per day. Please try again tomorrow.`,
+    };
+  }
+
+  // --- Global rate limit (hourly) ---
+  // Clean old entries
+  while (globalEmailLog.length > 0 && now - globalEmailLog[0] > RATE_LIMITS.GLOBAL_WINDOW_MS) {
+    globalEmailLog.shift();
+  }
+
+  if (globalEmailLog.length >= RATE_LIMITS.GLOBAL_MAX) {
+    const oldestGlobal = globalEmailLog[0];
+    const retryAfterMs = RATE_LIMITS.GLOBAL_WINDOW_MS - (now - oldestGlobal);
+    return {
+      allowed: false,
+      retryAfterMs,
+      reason: `Email service is temporarily overloaded. Please try again in ${Math.ceil(retryAfterMs / 60000)} minute(s).`,
+    };
+  }
+
+  return { allowed: true };
+};
+
+/**
+ * Record a successful email send for rate limiting
+ * @param {string} toEmail
+ */
+const recordEmailSent = (toEmail) => {
+  const now = Date.now();
+  const emailKey = toEmail.toLowerCase().trim();
+
+  if (!emailRateMap.has(emailKey)) {
+    emailRateMap.set(emailKey, { timestamps: [] });
+  }
+  emailRateMap.get(emailKey).timestamps.push(now);
+  globalEmailLog.push(now);
+};
+
+// ============================================================
+
+/**
+ * Send OTP email via Gmail SMTP (Nodemailer) — with rate limiting
  * @param {string} toEmail - Recipient email
  * @param {string} otp - 6-digit OTP
  * @param {string} type - 'customer' or 'vendor'
  * @returns {Promise<object>} Nodemailer send result
  */
 const sendOTPEmail = async (toEmail, otp, type = "customer") => {
+  // ✅ Check rate limit BEFORE sending
+  const rateCheck = checkRateLimit(toEmail);
+  if (!rateCheck.allowed) {
+    console.warn("SMTP Rate limit hit:", rateCheck.reason);
+    const err = new Error(rateCheck.reason);
+    err.statusCode = 429;
+    err.retryAfterMs = rateCheck.retryAfterMs;
+    throw err;
+  }
+
   try {
     const info = await transporter.sendMail({
       from: `"Quick Serve" <${process.env.SMTP_USER}>`,
@@ -49,6 +160,9 @@ const sendOTPEmail = async (toEmail, otp, type = "customer") => {
       `,
     });
 
+    // ✅ Record successful send for rate tracking
+    recordEmailSent(toEmail);
+
     console.log("OTP email sent successfully to:", toEmail, "MessageId:", info.messageId);
     return info;
   } catch (err) {
@@ -65,4 +179,4 @@ const generateOTP = () => {
   return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
-module.exports = { sendOTPEmail, generateOTP };
+module.exports = { sendOTPEmail, generateOTP, checkRateLimit };

@@ -112,7 +112,9 @@ const Header = () => {
   return (
     <>
       <nav className="bg-blue-200 p-4 flex justify-between items-center w-full">
-        <img src={fastdia} alt="Fastdial Logo" className="h-[53px] ml-4 md:ml-7" />
+        <Link to={token ? "/Home" : "/"}>
+          <img src={fastdia} alt="Fastdial Logo" className="h-[53px] ml-4 md:ml-7 cursor-pointer" />
+        </Link>
         <div className="md:hidden">
           <button onClick={toggleMobileMenu} aria-label="Toggle mobile menu">
             {isMobileMenuOpen ? (

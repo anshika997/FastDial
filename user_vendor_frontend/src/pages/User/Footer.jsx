@@ -1,17 +1,20 @@
  import React from "react";
 import { FaInstagram, FaFacebookF, FaXTwitter } from "react-icons/fa6";
 import fastdia from "../../assets/Quick Serve 10.png";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const Footer = () => {
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
   return (
     <footer className="bg-blue-400 text-white">
       <div className="max-w-7xl mx-auto px-6 py-12">
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
        <div>
-            <img src={fastdia} alt="Quick Serve Logo" className="h-13 mb-4"/>
+            <Link to={token ? "/Home" : "/"}>
+              <img src={fastdia} alt="Quick Serve Logo" className="h-13 mb-4 cursor-pointer"/>
+            </Link>
             <h2 className="text-xl font-bold mb-2 text-black">
               Get Trusted Help for All Your Daily Needs Anytime, Anywhere.
             </h2>

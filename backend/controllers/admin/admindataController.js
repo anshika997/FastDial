@@ -277,9 +277,10 @@ exports.insertvendor = catchAsyncError(async (req, res, next) => {
           name_of_bussiness, bussiness_category, fast_service_category_name,
           bussiness_proof_doc_url, gst_number, company_category, service_radius,
           bussiness_address, pincode, service_start_time, service_end_time,
-          bussiness_desc, image_url, account_details, kyc_docs
+          bussiness_desc, image_url, account_details, kyc_docs,
+          email_verified, is_approved, approved_by, approved_date
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 1, 'Admin', CURDATE())
       `;
 
   await db(insertQuery, [
@@ -418,8 +419,12 @@ exports.getVendorPayments = async (req, res) => {
       SELECT 
         sp.payment_id,
         sp.subscription_id,
-        sp.payment_details,
+        sp.razorpay_order_id,
+        sp.razorpay_payment_id,
+        sp.razorpay_signature,
+        sp.amount,
         sp.payment_date,
+        sp.payment_details,
 
         v.vendor_id,
         v.vendor_name,

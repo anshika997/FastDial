@@ -1,5 +1,5 @@
  import React, { useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux"; // Import useSelector
 import profileImg from "../assets/profile.png"; // Fallback image
 import bell from "../assets/bell.svg";
@@ -130,7 +130,9 @@ const Navbar = () => {
     <>
       <nav className="bg-white shadow-sm pl-12 pr-4 md:px-8 py-2 flex items-center justify-between border-b relative">
         <div className="flex items-center space-x-2">
-          <img src={logo} alt="Fastdial Logo" className="h-10 md:h-12 w-auto" />
+          <Link to="/vendordashboard">
+            <img src={logo} alt="Fastdial Logo" className="h-10 md:h-12 w-auto cursor-pointer" />
+          </Link>
         </div>
 
         <h1 className="text-base md:text-lg text-[#4285F4] font-semibold flex-1 ml-4 md:ml-1">{pageTitle}</h1>

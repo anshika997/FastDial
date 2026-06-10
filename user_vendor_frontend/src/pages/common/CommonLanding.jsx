@@ -1,5 +1,5 @@
  import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import fastdialLogo from '../../assets/Quick Serve 5.png';
 import mobileImage1 from '../../assets/Mobile.png';
 import mobileImage2 from '../../assets/Mobile2.svg';
@@ -45,7 +45,9 @@ const CommonLanding = () => {
       <div className="flex flex-col min-h-screen bg-gradient-to-b from-[#4285F4] to-[#7AACFF]">
         {/* Header */}
         <div className="w-[90%] max-w-7xl mx-auto mt-4 sm:mt-6 md:mt-10 h-16 sm:h-[70px] flex items-center justify-between p-2 sm:p-3 bg-white rounded-lg">
-          <img src={fastdialLogo} alt="Fastdial Logo" className="h-10 sm:h-12 md:h-[55px] ml-2 sm:ml-3" />
+          <Link to="/">
+            <img src={fastdialLogo} alt="Fastdial Logo" className="h-10 sm:h-12 md:h-[55px] ml-2 sm:ml-3 cursor-pointer" />
+          </Link>
           <div className="relative">
             <button
               onClick={() => setIsLoginDropdownOpen(!isLoginDropdownOpen)}
@@ -87,15 +89,15 @@ const CommonLanding = () => {
                 >
                   User Login
                 </button>
-                {/* <button
+                <button
                   onClick={() => {
-                    navigate('/adminlogin');
+                    window.open('http://localhost:5174/adminlogin', '_blank');
                     setIsLoginDropdownOpen(false);
                   }}
-                  className="block w-full text-left px-3 sm:px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm sm:text-base"
+                  className="block w-full text-left px-3 sm:px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm sm:text-base border-t border-gray-100"
                 >
                   Admin Login
-                </button> */}
+                </button>
               </div>
             )}
           </div>
@@ -146,7 +148,10 @@ const CommonLanding = () => {
                 Vendors can showcase their services on our platform with ease. Reach a wider audience and grow your business effortlessly. List your offerings, manage bookings, and connect with clients. Join us today and expand your business opportunities.
               </p>
               <button
-                onClick={() => navigate('/vendorlist')}
+                onClick={() => {
+                  const vendorToken = localStorage.getItem('vendorToken');
+                  navigate(vendorToken ? '/vendorlist' : '/vendorlogin');
+                }}
                 className="bg-[#4285F4] text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg text-base sm:text-lg font-semibold hover:bg-[#7AACFF] transition duration-300 click-scale"
               >
                 List your Service

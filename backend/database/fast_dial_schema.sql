@@ -30,6 +30,10 @@ CREATE TABLE IF NOT EXISTS CUSTOMERS (
     gender VARCHAR(10),
     customer_address JSON,
     customer_image VARCHAR(500),
+    password VARCHAR(255),
+    email_verified TINYINT(1) DEFAULT 0,
+    email_otp VARCHAR(10),
+    otp_expires_at TIMESTAMP NULL,
     PRIMARY KEY (customer_id)
 );
 
@@ -60,6 +64,9 @@ CREATE TABLE IF NOT EXISTS VENDORS (
     is_approved TINYINT(1) DEFAULT 0,
     is_verified TINYINT(1) DEFAULT 0,
     is_blocked TINYINT(1) DEFAULT 0,
+    email_otp VARCHAR(10),
+    otp_expires_at TIMESTAMP NULL,
+    email_verified TINYINT(1) DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (vendor_id)
@@ -373,6 +380,36 @@ FROM SERVICEBOOKINGS sb
 JOIN CUSTOMERS c ON sb.customer_id = c.customer_id
 JOIN SERVICES s ON sb.service_id = s.service_id
 LEFT JOIN SERVICE_CATEGORIES sc ON s.service_cat_id = sc.service_cat_id;
+
+-- ============================================================
+-- COMPLAINT VIEWS (required by admin dashboard)
+-- ============================================================
+
+CREATE OR REPLACE VIEW VendorComplaintsView AS
+SELECT
+    vc.vend_comp_id,
+    vc.vendor_id,
+    vc.complaint AS vend_comp_desc,
+    vc.status,
+    vc.created_at AS vend_comp_date,
+    v.vendor_name,
+    v.vendor_email,
+    v.vendor_mobile
+FROM vendorscomplaints vc
+LEFT JOIN VENDORS v ON vc.vendor_id = v.vendor_id;
+
+CREATE OR REPLACE VIEW CustomerComplaintsView AS
+SELECT
+    cc.cust_comp_id,
+    cc.customer_id,
+    cc.complaint AS cust_comp_desc,
+    cc.status,
+    cc.created_at AS cust_comp_date,
+    c.customer_name,
+    c.customer_email,
+    c.mobile
+FROM customercomplaints cc
+LEFT JOIN CUSTOMERS c ON cc.customer_id = c.customer_id;
 
 -- ============================================================
 -- SEED DATA

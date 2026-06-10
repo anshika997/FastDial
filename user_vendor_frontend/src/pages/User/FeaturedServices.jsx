@@ -16,7 +16,7 @@ import HouseClean from '../../assets/HouseClean.png';
 import Mechanic from '../../assets/Mechanic.png';
 import PlumbingService from '../../assets/PlumbingService.png';
 import fastdia from "../../assets/Quick Serve 5.png";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
 import image from "../../assets/image.png";
@@ -253,7 +253,9 @@ const FeaturedServices = () => {
 
               <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md">
                 <div className="flex items-center space-x-1">
-                  <img src={fastdia} alt="Logo" className="h-10 sm:h-12" />
+                  <Link to="/Home">
+                    <img src={fastdia} alt="Logo" className="h-10 sm:h-12 cursor-pointer" />
+                  </Link>
                 </div>
                 <ul className="mt-2 text-gray-600 space-y-1 sm:space-y-2 list-disc list-inside text-xs sm:text-sm">
                   <li>Quality Assured</li>

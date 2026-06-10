@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import Bell from "../assets/Bell.png";
 import Setpricing from "../pages/admin/Setpricing";
 import logo from "../assets/Quick Serve 5.png";
@@ -27,7 +27,9 @@ const NavbarMain = () => {
   return (
     <nav className="bg-white shadow-sm px-8 py-2 flex items-center justify-between border-b position-fixed">
       <div className="flex items-center space-x-2">
-        <img src={logo} alt="Fastdial Logo" className="h-[53px] w-full " />
+        <a href="http://localhost:5173/">
+          <img src={logo} alt="Fastdial Logo" className="h-[53px] w-full cursor-pointer" />
+        </a>
       </div>
 
       <h1 className="text-lg font-semibold mr-[64%] ml-3">Manage Vendor</h1>

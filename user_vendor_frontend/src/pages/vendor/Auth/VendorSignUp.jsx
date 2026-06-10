@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { vendorSignupRequest } from "../../../saga/features/vendor/vendorSlice";
 import { vendorVerifyEmailOtpAPI, vendorResendEmailOtpAPI } from "../../../saga/services/vendorAPI";
@@ -155,7 +155,9 @@ const SignUp = () => {
         <div className="form-section w-full sm:w-1/2 flex items-center justify-center" style={{ backgroundColor: "#7AACFF" }}>
           <div className="w-[90%] max-w-md p-4 sm:p-6 md:p-8">
             <div className="flex justify-center mb-4 sm:mb-6">
-              <img src={fastdialLogo} alt="Fastdial Logo" className="h-12 sm:h-14" />
+              <Link to="/">
+                <img src={fastdialLogo} alt="Fastdial Logo" className="h-12 sm:h-14 cursor-pointer" />
+              </Link>
             </div>
 
             {/* =================== OTP VERIFICATION STEP =================== */}

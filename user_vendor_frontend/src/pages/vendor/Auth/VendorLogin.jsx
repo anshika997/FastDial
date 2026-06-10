@@ -199,7 +199,9 @@ const Login = () => {
         <div className="form-section w-full sm:w-1/2 flex items-center justify-center" style={{ backgroundColor: '#7AACFF' }}>
           <div className="w-[90%] max-w-md p-4 sm:p-6 md:p-8 fade-in">
             <div className="flex justify-center mb-4 sm:mb-6">
-              <img src={fastdialLogo} alt="Fastdial Logo" className="h-12 sm:h-15" />
+              <Link to="/">
+                <img src={fastdialLogo} alt="Fastdial Logo" className="h-12 sm:h-15 cursor-pointer" />
+              </Link>
             </div>
             <h2 className="text-2xl sm:text-3xl font-bold text-white text-center mb-2">Login</h2>
             <p className="text-center text-white text-sm sm:text-base mb-4 sm:mb-6">Hi! Welcome back to Quick Serve</p>

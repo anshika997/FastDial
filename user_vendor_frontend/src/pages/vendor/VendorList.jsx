@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import fastdialLogo from '/src/assets/Quick Serve 5.png';
@@ -14,6 +14,13 @@ const BASEURL = import.meta.env.VITE_API_URL;
 const VendorList = () => {
   const location = useLocation();
   const fromVendorLogin = location.state?.fromVendorLogin;
+  const navigate = useNavigate();
+
+  // ✅ Auth Check — Vendor must be logged in to list a service
+  const vendorToken = localStorage.getItem('vendorToken');
+  const isVendorAuthenticated = !!vendorToken;
+
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [aadhaarFile, setAadhaarFile] = useState(null);
@@ -50,7 +57,6 @@ const VendorList = () => {
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const navigate = useNavigate();
   const aadhaarInputRef = useRef(null);
   const panInputRef = useRef(null);
   const dispatch = useDispatch();
@@ -148,6 +154,11 @@ const VendorList = () => {
 
   const openModal = (e) => {
     e.preventDefault();
+    // If vendor is not logged in, redirect to login page
+    if (!isVendorAuthenticated) {
+      navigate('/vendorlogin');
+      return;
+    }
     setIsModalOpen(true);
   };
 
@@ -323,7 +334,9 @@ const VendorList = () => {
   return (
     <div className="flex flex-col min-h-screen" style={{ background: 'linear-gradient(180deg, #4285F4 0%, #7AACFF 50%, #ffffff)' }}>
       <div className="w-4/5 mx-auto mt-10 h-[70px] flex items-center justify-between p-2 bg-white rounded-lg">
-        <img src={fastdialLogo} alt="Fastdial Logo" className="h-12" />
+        <Link to="/">
+          <img src={fastdialLogo} alt="Fastdial Logo" className="h-12 cursor-pointer" />
+        </Link>
         <button
           onClick={openModal}
           className="bg-[#4285F4] text-white px-6 py-2 rounded-lg text-base font-semibold hover:bg-blue-600 transition duration-300 click-scale"

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import frame from '../../../../src/assets/Frame.png';
 import logo from '../../../assets/Quick Serve 10.png';
 import { 
@@ -126,11 +126,13 @@ const Login = () => {
 
       <div className="w-full md:w-1/2 p-4 flex flex-col items-center justify-center">
         <div className="text-center mb-6 flex flex-col items-center">
-          <img
-            src={logo}
-            alt="Fastdial Logo"
-            className="mb-4 h-auto"
-          />
+          <a href="http://localhost:5173/">
+            <img
+              src={logo}
+              alt="Fastdial Logo"
+              className="mb-4 h-auto cursor-pointer"
+            />
+          </a>
         </div>
         <h2 className="text-3xl font-bold text-white mb-2">Login</h2>
         <p className="text-white mb-6">Welcome back to Quick Serve</p>
