@@ -14,7 +14,7 @@ import CancelBooking from "./pages/User/Bookings/CancelBooking";
 import Rating from "./pages/User/Rating";
 import Favourate from "./pages/User/Favourate";
 import MessageModal from "./pages/User/MessageModal";
-import LoginPage from "./pages/User/Login/LoginModal";
+import {LoginPage} from "./pages/User/Login/LoginModal";
 import OtpPage from "./pages/User/Login/OtpModal";
 import ProfilePage from "./pages/User/Login/ProfileModal";
 import LocationPage from "./pages/User/Login/LocationModal";

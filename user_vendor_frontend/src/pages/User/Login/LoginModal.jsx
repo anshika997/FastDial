@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginRequest } from '../../../saga/features/customer/customerSlice';
 import LoginImage from "../../../assets/cuate.png";
+import SignupModal from './SignupModal';
 
 const LoginModal = ({ isOpen, onClose, onOpenSignupModal }) => {
   const dispatch = useDispatch();
@@ -19,13 +21,13 @@ const LoginModal = ({ isOpen, onClose, onOpenSignupModal }) => {
 
   // After successful login, close modal
   const { isAuthenticated, newUser, pendingVerificationEmail } = useSelector((state) => state.customer);
-  
+
   if (pendingVerificationEmail && isOpen) {
     onClose();
     onOpenSignupModal();
     return null;
   }
-  
+
   if (isAuthenticated && isOpen) {
     onClose();
     if (!newUser) {
@@ -79,9 +81,9 @@ const LoginModal = ({ isOpen, onClose, onOpenSignupModal }) => {
           </div>
 
           <div className="flex items-center gap-2 md:gap-3">
-            <input 
-              type="checkbox" 
-              id="terms" 
+            <input
+              type="checkbox"
+              id="terms"
               className="w-4 h-4"
               checked={agreeTerms}
               onChange={(e) => setAgreeTerms(e.target.checked)}
@@ -118,6 +120,28 @@ const LoginModal = ({ isOpen, onClose, onOpenSignupModal }) => {
         </div>
       </div>
     </div>
+  );
+};
+
+// ─── Standalone page wrapper (used by the /User/Login route) ───────────────────
+export const LoginPage = () => {
+  const navigate = useNavigate();
+  const [signupOpen, setSignupOpen] = useState(false);
+
+  return (
+    <>
+      <LoginModal
+        isOpen={true}
+        onClose={() => navigate('/')}
+        onOpenSignupModal={() => setSignupOpen(true)}
+      />
+      {signupOpen && (
+        <SignupModal
+          isOpen={signupOpen}
+          onClose={() => setSignupOpen(false)}
+        />
+      )}
+    </>
   );
 };
 
