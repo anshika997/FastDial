@@ -4,11 +4,14 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const pool = mysql.createPool({
-  host: process.env.DB_SERVER,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  port: process.env.DB_PORT || 3306,
+  host: process.env.DB_SERVER || "gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com",
+  user: process.env.DB_USER || "7jKJKuVNRKwkHZn.root",
+  password: process.env.DB_PASSWORD || "9n9WyRtevkUIZJpH",
+  database: process.env.DB_NAME || "fast_dial",
+  port: process.env.DB_PORT || 4000,
+  ssl: (process.env.DB_SERVER && process.env.DB_SERVER !== "localhost") || !process.env.DB_SERVER
+    ? { rejectUnauthorized: false }
+    : undefined,
   waitForConnections: true,
   connectionLimit: 25,
   queueLimit: 0,

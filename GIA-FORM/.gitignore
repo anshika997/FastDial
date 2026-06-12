@@ -1,7 +1,0 @@
-.env
-node_modules
-build
-dist
-!GIASCHOOL/.env
-
-!GIAAdmin/.env
